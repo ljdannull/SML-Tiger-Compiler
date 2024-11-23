@@ -4,9 +4,9 @@ type lexresult = Tokens.token
 val lineNum = ErrorMsg.lineNum
 val linePos = ErrorMsg.linePos
 
-val comments: int ref = ref 0
-val stringStart: int ref = ref 0
-val stringLiteral: string list = []
+val comments = ref 0
+val stringStart = ref 0
+val stringLiteral = ref ""
 
 fun err(p1,p2) = ErrorMsg.error p1
 
@@ -20,6 +20,7 @@ fun eof() = let val pos = hd(!linePos) in Tokens.EOF(pos,pos) end
 
 \n	=> (lineNum := !lineNum+1; linePos := yypos :: !linePos; continue());
 \t => (continue());
+\r => (continue());
 " " => (continue());
 
 <INITIAL>"type" => (Tokens.TYPE(yypos, yypos + 4));
@@ -68,5 +69,18 @@ fun eof() = let val pos = hd(!linePos) in Tokens.EOF(pos,pos) end
 "/*" => (comments := (!comments + 1); YYBEGIN COMMENT; continue());
 <COMMENT>"*/" => (comments := (!comments-1); if (!comments = 0) then YYBEGIN INITIAL else (); continue());
 <COMMENT>. => (continue());
+
+<INITIAL>\" => (YYBEGIN STRING; stringStart := yypos ;continue());
+<STRING>\" => (
+  let 
+    val ret = Tokens.STRING(!stringLiteral, !stringStart, yypos);
+    val _ = (stringStart := ~1; stringLiteral := ""; YYBEGIN INITIAL)
+  in 
+    ret
+  end
+);
+<STRING>\\. => (stringLiteral := !stringLiteral ^ yytext; continue());
+<STRING>. => (stringLiteral := !stringLiteral ^ yytext; continue());
+
 
 .       => (ErrorMsg.error yypos ("illegal character " ^ yytext); continue());
