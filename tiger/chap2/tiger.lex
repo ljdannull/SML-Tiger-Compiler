@@ -12,10 +12,13 @@ fun err(p1,p2) = ErrorMsg.error p1
 
 fun eof() = let val pos = hd(!linePos) in Tokens.EOF(pos,pos) end
 
+type svalue = Tokens.svalue
+type pos = int
+type ('a, 'b) token = ('a, 'b) Tokens.token type lexresult = (svalue,pos) token
 
 %% 
 %s COMMENT STRING;
-
+%header (functor TigerLexFun(structure Tokens: Tiger_TOKENS))
 %%
 
 \n	=> (lineNum := !lineNum+1; linePos := yypos :: !linePos; continue());
@@ -41,8 +44,8 @@ fun eof() = let val pos = hd(!linePos) in Tokens.EOF(pos,pos) end
 <INITIAL>"if" => (Tokens.IF(yypos, yypos + 2));
 <INITIAL>"array" => (Tokens.ARRAY(yypos, yypos + 5));
 <INITIAL>":=" => (Tokens.ASSIGN(yypos, yypos + 2));
-<INITIAL>"or" => (Tokens.OR(yypos, yypos + 2));
-<INITIAL>"and" => (Tokens.AND(yypos, yypos + 3));
+<INITIAL>"|" => (Tokens.OR(yypos, yypos + 2));
+<INITIAL>"&" => (Tokens.AND(yypos, yypos + 3));
 <INITIAL>">=" => (Tokens.GE(yypos, yypos + 2));
 <INITIAL>">" => (Tokens.GT(yypos, yypos + 1));
 <INITIAL>"<=" => (Tokens.LE(yypos, yypos + 2));

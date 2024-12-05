@@ -11,7 +11,21 @@
   | BREAK | NIL
   | FUNCTION | VAR | TYPE 
 
-%nonterm  exp | program
+%nonterm  exp 
+  | program
+  | dec_seq
+  | dec
+  | tydec
+  | ty
+  | tyfields
+  | tyfield_seq
+  | vardec
+  | fundec
+  | lvalue
+  | exp_seq
+  | funcparams
+  | recordparams
+
 
 %pos int
 %verbose
@@ -26,6 +40,13 @@
 
 %prefer THEN ELSE LPAREN
 
+%left ASSIGN
+%left EQ NEQ LT LE GT GE
+%left AND OR
+%left PLUS MINUS
+%left TIMES DIVIDE
+
+
 %value ID ("bogus")
 %value INT (1)
 %value STRING ("")
@@ -33,6 +54,63 @@
 %%
 
 program	: exp				()
+dec_seq : dec dec_seq ()
+ | ()
+dec : tydec ()
+ | vardec ()
+ | fundec ()
+tydec : TYPE ID EQ ty ()
+ty : ID ()
+ | LBRACE tyfields RBRACE ()
+ | ARRAY OF ID ()
+tyfields : ID COLON ID tyfield_seq ()
+ | ()
+tyfield_seq : COMMA ID COLON ID tyfield_seq ()
+ | ()
+vardec : VAR ID ASSIGN exp ()
+ | VAR ID COLON ID ASSIGN exp ()
+fundec : FUNCTION ID LPAREN tyfields RPAREN EQ exp ()
+ | FUNCTION ID LPAREN tyfields RPAREN COLON ID EQ exp ()
+lvalue : ID ()
+ | lvalue DOT ID ()
+ | lvalue LBRACK exp RBRACK ()
+exp_seq : SEMICOLON exp exp_seq ()
+ | ()
+funcparams : COMMA exp funcparams ()
+ | ()
+recordparams : COMMA ID EQ exp recordparams ()
+ | ()
+exp: lvalue ()
+ (* | () valueless expressions? *)
+ | NIL ()
+ | LPAREN exp SEMICOLON exp exp_seq RPAREN ()
+ | LPAREN RPAREN ()
+ | INT ()
+ | STRING ()
+ | MINUS INT ()
+ | ID LPAREN RPAREN ()
+ | ID LPAREN exp funcparams RPAREN ()
+ | exp PLUS exp ()
+ | exp MINUS exp ()
+ | exp TIMES exp ()
+ | exp DIVIDE exp ()
+ | exp EQ exp ()
+ | exp NEQ exp ()
+ | exp GT exp ()
+ | exp LT exp ()
+ | exp GE exp ()
+ | exp LE exp ()
+ | exp AND exp ()
+ | exp OR exp ()
+ | ID LBRACE ID EQ exp recordparams RBRACE ()
+ | ID LBRACE RBRACE ()
+ | ID LBRACK exp RBRACK OF exp ()
+ | lvalue ASSIGN exp ()
+ | IF exp THEN exp ELSE exp ()
+ | IF exp THEN exp ()
+ | WHILE exp DO exp ()
+ | FOR ID ASSIGN exp TO exp DO exp ()
+ | BREAK ()
+ | LET dec_seq IN exp_seq END ()
+ | LPAREN exp RPAREN ()
 
-	
-exp: 			()
