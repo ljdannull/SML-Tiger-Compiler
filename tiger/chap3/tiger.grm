@@ -40,9 +40,16 @@
 
 %prefer THEN ELSE LPAREN
 
+
+%left THEN DO ELSE OF (*
+if at top, then IF exp THEN exp + exp -> IF exp THEN (exp + exp)
+if at bottom, then IF exp THEN exp + exp -> (IF exp THEN exp) + exp
+*)
 %left ASSIGN
-%left EQ NEQ LT LE GT GE
-%left AND OR
+%left LT LE GT GE
+%nonassoc EQ NEQ
+%left OR
+%left AND
 %left PLUS MINUS
 %left TIMES DIVIDE
 
@@ -114,3 +121,4 @@ exp: lvalue ()
  | LET dec_seq IN exp_seq END ()
  | LPAREN exp RPAREN ()
 
+(* IF exp THEN exp + exp *)
