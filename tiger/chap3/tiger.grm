@@ -25,6 +25,7 @@
   | exp_seq
   | funcparams
   | recordparams
+  | else_clause
 
 
 %pos int
@@ -47,9 +48,9 @@ if at bottom, then IF exp THEN exp + exp -> (IF exp THEN exp) + exp
 *)
 %left ASSIGN
 %left LT LE GT GE
-%nonassoc EQ NEQ
 %left OR
 %left AND
+%nonassoc EQ NEQ
 %left PLUS MINUS
 %left TIMES DIVIDE
 
@@ -81,22 +82,24 @@ fundec : FUNCTION ID LPAREN tyfields RPAREN EQ exp ()
 lvalue : ID ()
  | lvalue DOT ID ()
  | lvalue LBRACK exp RBRACK ()
-exp_seq : SEMICOLON exp exp_seq ()
- | ()
+exp_seq : SEMICOLON exp exp_seq (print "exp_seq\n")
+ | () (* this doesn't include the optional semicolon after the last expression *)
 funcparams : COMMA exp funcparams ()
  | ()
 recordparams : COMMA ID EQ exp recordparams ()
  | ()
+else_clause : ELSE exp ()
+ | ()
 exp: lvalue ()
  (* | () valueless expressions? *)
  | NIL ()
- | LPAREN exp SEMICOLON exp exp_seq RPAREN ()
+ | LPAREN exp exp_seq RPAREN (print "exp_seq finish\n")
  | LPAREN RPAREN ()
  | INT ()
  | STRING ()
  | MINUS INT ()
  | ID LPAREN RPAREN ()
- | ID LPAREN exp funcparams RPAREN ()
+ | ID LPAREN exp funcparams RPAREN (print "function call\n")
  | exp PLUS exp ()
  | exp MINUS exp ()
  | exp TIMES exp ()
@@ -111,14 +114,13 @@ exp: lvalue ()
  | exp OR exp ()
  | ID LBRACE ID EQ exp recordparams RBRACE ()
  | ID LBRACE RBRACE ()
- | ID LBRACK exp RBRACK OF exp ()
+ | lvalue LBRACK exp RBRACK OF exp () (* lvalue instead of ID addresses shift reduce between this rule and lvalue : ID. This assumes type-id can be lvalue *)
  | lvalue ASSIGN exp ()
- | IF exp THEN exp ELSE exp ()
- | IF exp THEN exp ()
+ | IF exp THEN exp else_clause ()
  | WHILE exp DO exp ()
  | FOR ID ASSIGN exp TO exp DO exp ()
  | BREAK ()
- | LET dec_seq IN exp_seq END ()
+ | LET dec_seq IN exp exp_seq END ()
  | LPAREN exp RPAREN ()
 
 (* IF exp THEN exp + exp *)

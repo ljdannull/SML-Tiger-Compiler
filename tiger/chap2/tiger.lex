@@ -12,13 +12,8 @@ fun err(p1,p2) = ErrorMsg.error p1
 
 fun eof() = let val pos = hd(!linePos) in Tokens.EOF(pos,pos) end
 
-type svalue = Tokens.svalue
-type pos = int
-type ('a, 'b) token = ('a, 'b) Tokens.token type lexresult = (svalue,pos) token
-
 %% 
 %s COMMENT STRING;
-%header (functor TigerLexFun(structure Tokens: Tiger_TOKENS))
 %%
 
 \n	=> (lineNum := !lineNum+1; linePos := yypos :: !linePos; continue());
@@ -50,7 +45,7 @@ type ('a, 'b) token = ('a, 'b) Tokens.token type lexresult = (svalue,pos) token
 <INITIAL>">" => (Tokens.GT(yypos, yypos + 1));
 <INITIAL>"<=" => (Tokens.LE(yypos, yypos + 2));
 <INITIAL>"<" => (Tokens.LT(yypos, yypos + 1));
-<INITIAL>"!=" => (Tokens.NEQ(yypos, yypos + 2));
+<INITIAL>"<>" => (Tokens.NEQ(yypos, yypos + 2));
 <INITIAL>"=" => (Tokens.EQ(yypos, yypos + 1));
 <INITIAL>"/" => (Tokens.DIVIDE(yypos, yypos + 1));
 <INITIAL>"*" => (Tokens.TIMES(yypos, yypos + 1));
@@ -67,7 +62,7 @@ type ('a, 'b) token = ('a, 'b) Tokens.token type lexresult = (svalue,pos) token
 <INITIAL>":" => (Tokens.COLON(yypos, yypos + 1));
 <INITIAL>"," => (Tokens.COMMA(yypos, yypos + 1));
 <INITIAL>[0-9]+ => (Tokens.INT(valOf (Int.fromString yytext), yypos, yypos + String.size yytext));
-<INITIAL>[a-zA-Z][a-zA-Z0-9]* => (Tokens.ID(yytext, yypos, yypos + String.size yytext));
+<INITIAL>[a-zA-Z_][a-zA-Z0-9_]* => (Tokens.ID(yytext, yypos, yypos + String.size yytext));
 
 "/*" => (comments := (!comments + 1); YYBEGIN COMMENT; continue());
 <COMMENT>"*/" => (comments := (!comments-1); if (!comments = 0) then YYBEGIN INITIAL else (); continue());

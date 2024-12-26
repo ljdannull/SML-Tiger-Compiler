@@ -1,4 +1,8 @@
-structure Parse : sig val parse : string -> unit  end =
+structure Parse : sig 
+	val parse : string -> unit  
+	val run_test : int -> unit
+	val run_tests : int -> unit
+end =
 struct 
   structure TigerLrVals = TigerLrValsFun(structure Token = LrParser.Token)
   structure Lex = TigerLexFun(structure Tokens = TigerLrVals.Tokens)
@@ -16,6 +20,16 @@ struct
 	   absyn
       end handle LrParser.ParseError => raise ErrorMsg.Error
 
+	fun run_test test = parse ("../testcases/test" ^ Int.toString test ^ ".tig")
+	fun run_tests highest = 
+		let
+      fun loop i =
+        if i > highest then ()
+        else
+          (run_test i; loop (i + 1))
+    in
+      loop 1
+    end
 end
 
 

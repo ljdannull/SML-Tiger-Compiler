@@ -1,2 +1,2 @@
 Skeleton 5
-d2f5Cä¢ErrorMsg"d"List"ä¢String"ä¢Tokens"ä¢Vector"Nad"Mlex"h3aä¢UserDeclarations"è0aä¢Internal"h1aä¢StartStates"ÿbbbd2bc2egp1ÿ>egp2ÿÿ"f5Cÿd"Int"ÿÿÿ Nf2ä¢Unsafe"ÿf6ÿ‚ Cd"Char"ÿ>ÿÿÿ)Næ0ÿƒ
+d2f5Cd"Char"ä¢ErrorMsg"ä¢Tokens"ä¢TextIO"ä¢Vector"Nad"Mlex"h3aä¢yyInput"jh3aä¢TIO"gp1ÿ ad"TSIO"gp2ÿd"StreamIO"ad"TPIO"gp1d"TextPrimIO"è0aä¢UserDeclarations"ÿ‚bbd2egp1ÿ‚f9d"IO"ÿ>ÿ‚ÿCd"List"d"Int"d"String"ÿÿ)Nf0f1ÿ>
