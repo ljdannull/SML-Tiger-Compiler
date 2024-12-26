@@ -704,8 +704,8 @@ end
  ( MlyValue.ntVOID exp1, _, _)) :: ( _, ( _, SEMICOLON1left, _)) :: 
 rest671)) => let val  result = MlyValue.ntVOID (fn _ => ( let val  
 exp1 = exp1 ()
- val  (exp_seq as exp_seq1) = exp_seq1 ()
- in (print "exp_seq\n")
+ val  exp_seq1 = exp_seq1 ()
+ in ()
 end; ()))
  in ( LrTable.NT 11, ( result, SEMICOLON1left, exp_seq1right), rest671
 )
@@ -765,8 +765,8 @@ end
 exp_seq1, _, _)) :: ( _, ( MlyValue.ntVOID exp1, _, _)) :: ( _, ( _, 
 LPAREN1left, _)) :: rest671)) => let val  result = MlyValue.ntVOID (fn
  _ => ( let val  exp1 = exp1 ()
- val  (exp_seq as exp_seq1) = exp_seq1 ()
- in (print "exp_seq finish\n")
+ val  exp_seq1 = exp_seq1 ()
+ in ()
 end; ()))
  in ( LrTable.NT 0, ( result, LPAREN1left, RPAREN1right), rest671)
 end
@@ -808,7 +808,7 @@ funcparams1, _, _)) :: ( _, ( MlyValue.ntVOID exp1, _, _)) :: _ :: ( _
 MlyValue.ntVOID (fn _ => ( let val  ID1 = ID1 ()
  val  exp1 = exp1 ()
  val  funcparams1 = funcparams1 ()
- in (print "function call\n")
+ in ()
 end; ()))
  in ( LrTable.NT 0, ( result, ID1left, RPAREN1right), rest671)
 end
