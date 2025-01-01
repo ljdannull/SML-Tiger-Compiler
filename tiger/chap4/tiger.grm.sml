@@ -9,7 +9,9 @@ struct
 structure Header = 
 struct
 structure A = Absyn
-
+fun add_or_combine_dec (A.FunctionDec(a1::l1), A.FunctionDec(l2)::dec_seq) = A.FunctionDec(a1::l2)::dec_seq
+ | add_or_combine_dec (A.TypeDec(a1::l1), A.TypeDec(l2)::dec_seq) = A.TypeDec(a1::l2)::dec_seq
+ | add_or_combine_dec (dec, dec_seq) = dec::dec_seq
 
 end
 structure LrTable = Token.LrTable
@@ -571,7 +573,7 @@ end
  ( MlyValue.dec dec1, dec1left, _)) :: rest671)) => let val  result = 
 MlyValue.dec_seq (fn _ => let val  (dec as dec1) = dec1 ()
  val  (dec_seq as dec_seq1) = dec_seq1 ()
- in (dec::dec_seq)
+ in (add_or_combine_dec(dec, dec_seq))
 end)
  in ( LrTable.NT 2, ( result, dec1left, dec_seq1right), rest671)
 end

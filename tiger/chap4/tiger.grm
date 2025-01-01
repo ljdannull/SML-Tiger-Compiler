@@ -1,5 +1,7 @@
 structure A = Absyn
-
+fun add_or_combine_dec (A.FunctionDec(a1::l1), A.FunctionDec(l2)::dec_seq) = A.FunctionDec(a1::l2)::dec_seq
+ | add_or_combine_dec (A.TypeDec(a1::l1), A.TypeDec(l2)::dec_seq) = A.TypeDec(a1::l2)::dec_seq
+ | add_or_combine_dec (dec, dec_seq) = dec::dec_seq
 %%
 %term
     EOF 
@@ -62,7 +64,7 @@ if at bottom, then IF exp THEN exp + exp -> (IF exp THEN exp) + exp
 %%
 
 program	: exp				                                    (exp)
-dec_seq : dec dec_seq                                   (dec::dec_seq)
+dec_seq : dec dec_seq                                   (add_or_combine_dec(dec, dec_seq))
  |                                                      ([])
 dec : tydec                                             (tydec)
  | vardec                                               (vardec)
